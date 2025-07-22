@@ -2,11 +2,13 @@ import axios from 'axios';
 import type {
   CoinData,
   CoinDetails,
+  CoinDetailsApiResponse,
   SearchResponse,
   PriceHistory,
   ChartData,
   ApiError,
 } from '@/lib/types/crypto';
+import { transformCoinDetails } from '@/lib/utils/crypto-transform';
 
 const BASE_URL = 'https://api.coingecko.com/api/v3';
 
@@ -83,11 +85,36 @@ export class CoinGeckoAPI {
   }
 
   /**
+   * Get market data for specific coins by IDs
+   */
+  static async getCoinsByIds(coinIds: string[]): Promise<CoinData[]> {
+    if (coinIds.length === 0) return [];
+    
+    try {
+      const response = await api.get('/coins/markets', {
+        params: {
+          vs_currency: 'usd',
+          ids: coinIds.join(','),
+          order: 'market_cap_desc',
+          per_page: 100,
+          page: 1,
+          sparkline: false,
+          price_change_percentage: '24h',
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching coins by IDs:', error);
+      throw error;
+    }
+  }
+
+  /**
    * Get detailed information about a specific coin
    */
   static async getCoinDetails(id: string): Promise<CoinDetails> {
     try {
-      const response = await api.get(`/coins/${id}`, {
+      const response = await api.get<CoinDetailsApiResponse>(`/coins/${id}`, {
         params: {
           localization: false,
           tickers: false,
@@ -97,7 +124,9 @@ export class CoinGeckoAPI {
           sparkline: false,
         },
       });
-      return response.data;
+      
+      // Transform the nested API response to flat component-friendly structure
+      return transformCoinDetails(response.data);
     } catch (error) {
       console.error('Error fetching coin details:', error);
       throw error;
@@ -146,6 +175,7 @@ export class CoinGeckoAPI {
 export const {
   getTopCoins,
   searchCoins,
+  getCoinsByIds,
   getCoinDetails,
   getCoinChart,
   getTrendingCoins,

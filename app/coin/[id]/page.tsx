@@ -7,6 +7,7 @@ import PriceChart from '@/components/charts/price-chart';
 import LoadingSkeleton from '@/components/ui/loading-skeleton';
 import ErrorBoundary from '@/components/ui/error-boundary';
 import { formatCurrency, formatPercentage, getChangeColor } from '@/lib/utils/format';
+import { formatCurrencySafe, formatPercentageSafe } from '@/lib/utils/crypto-transform';
 import { ArrowLeft, TrendingUp, TrendingDown, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -15,9 +16,8 @@ interface CoinPageProps {
   params: Promise<{ id: string }>;
 }
 
-export default function CoinPage({ params }: CoinPageProps) {
-  const { id } = use(params);
-  
+// Separate component to handle the actual coin display logic
+function CoinContent({ id }: { id: string }) {
   const { 
     data: coinDetails, 
     isLoading: isLoadingDetails, 
@@ -30,9 +30,14 @@ export default function CoinPage({ params }: CoinPageProps) {
     error: chartError 
   } = useCoinChart(id, 7);
 
+  // Simplified debug logging - only log state changes
+  if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+    console.log(`[${id}] Loading: ${isLoadingDetails}, HasData: ${!!coinDetails}`);
+  }
+
   if (isLoadingDetails) {
     return (
-      <div className="min-h-screen bg-background">
+      <>
         <Header />
         <main className="container mx-auto px-4 py-8">
           <div className="mb-6">
@@ -43,13 +48,13 @@ export default function CoinPage({ params }: CoinPageProps) {
           <LoadingSkeleton variant="card" count={2} />
           <LoadingSkeleton variant="chart" className="mt-6" />
         </main>
-      </div>
+      </>
     );
   }
 
   if (detailsError || !coinDetails) {
     return (
-      <div className="min-h-screen bg-background">
+      <>
         <Header />
         <main className="container mx-auto px-4 py-8">
           <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-6 text-center">
@@ -63,7 +68,7 @@ export default function CoinPage({ params }: CoinPageProps) {
             </Link>
           </div>
         </main>
-      </div>
+      </>
     );
   }
 
@@ -71,9 +76,8 @@ export default function CoinPage({ params }: CoinPageProps) {
   const isPositive = coinDetails.price_change_percentage_24h > 0;
 
   return (
-    <div className="min-h-screen bg-background">
+    <>
       <Header />
-      
       <main className="container mx-auto px-4 py-8">
         {/* Back Button */}
         <div className="mb-6">
@@ -92,13 +96,19 @@ export default function CoinPage({ params }: CoinPageProps) {
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <div className="flex items-center space-x-4">
                 <div className="relative w-16 h-16">
-                  <Image
-                    src={coinDetails.image}
-                    alt={`${coinDetails.name} logo`}
-                    fill
-                    className="rounded-full"
-                    sizes="64px"
-                  />
+                  {coinDetails.image ? (
+                    <Image
+                      src={coinDetails.image}
+                      alt={`${coinDetails.name} logo`}
+                      fill
+                      className="rounded-full"
+                      sizes="64px"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-muted rounded-full flex items-center justify-center text-lg font-medium">
+                      {coinDetails.symbol?.charAt(0) || '?'}
+                    </div>
+                  )}
                 </div>
                 <div>
                   <h1 className="text-3xl font-bold text-card-foreground">
@@ -112,7 +122,7 @@ export default function CoinPage({ params }: CoinPageProps) {
               
               <div className="text-right">
                 <p className="text-3xl font-bold text-card-foreground">
-                  {formatCurrency(coinDetails.current_price)}
+                  {formatCurrencySafe(coinDetails.current_price)}
                 </p>
                 <div className={`flex items-center justify-end space-x-2 text-lg ${priceChangeColor}`}>
                   {isPositive ? (
@@ -120,7 +130,7 @@ export default function CoinPage({ params }: CoinPageProps) {
                   ) : (
                     <TrendingDown className="w-5 h-5" />
                   )}
-                  <span>{formatPercentage(coinDetails.price_change_percentage_24h)}</span>
+                  <span>{formatPercentageSafe(coinDetails.price_change_percentage_24h)}</span>
                 </div>
               </div>
             </div>
@@ -131,25 +141,25 @@ export default function CoinPage({ params }: CoinPageProps) {
             <div className="bg-card border rounded-lg p-4">
               <p className="text-muted-foreground text-sm">Market Cap</p>
               <p className="text-xl font-semibold text-card-foreground">
-                {formatCurrency(coinDetails.market_cap)}
+                {formatCurrencySafe(coinDetails.market_cap)}
               </p>
             </div>
             <div className="bg-card border rounded-lg p-4">
               <p className="text-muted-foreground text-sm">24h Volume</p>
               <p className="text-xl font-semibold text-card-foreground">
-                {formatCurrency(coinDetails.total_volume)}
+                {formatCurrencySafe(coinDetails.total_volume)}
               </p>
             </div>
             <div className="bg-card border rounded-lg p-4">
               <p className="text-muted-foreground text-sm">24h High</p>
               <p className="text-xl font-semibold text-card-foreground">
-                {formatCurrency(coinDetails.high_24h)}
+                {formatCurrencySafe(coinDetails.high_24h)}
               </p>
             </div>
             <div className="bg-card border rounded-lg p-4">
               <p className="text-muted-foreground text-sm">24h Low</p>
               <p className="text-xl font-semibold text-card-foreground">
-                {formatCurrency(coinDetails.low_24h)}
+                {formatCurrencySafe(coinDetails.low_24h)}
               </p>
             </div>
           </div>
@@ -197,6 +207,17 @@ export default function CoinPage({ params }: CoinPageProps) {
           )}
         </ErrorBoundary>
       </main>
+    </>
+  );
+}
+
+export default function CoinPage({ params }: CoinPageProps) {
+  // Call use() at top level - React will handle suspense automatically
+  const { id } = use(params);
+
+  return (
+    <div className="min-h-screen bg-background">
+      <CoinContent id={id} />
     </div>
   );
 }

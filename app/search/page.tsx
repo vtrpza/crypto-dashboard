@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useSearchCoins } from '@/hooks/useCoins';
+import { useSearchCoinsWithMarketData } from '@/hooks/useCoins';
 import Header from '@/components/ui/header';
 import SearchBar from '@/components/ui/search-bar';
 import CoinList from '@/components/features/coin-list';
@@ -12,40 +12,16 @@ export default function SearchPage() {
   const [searchQuery, setSearchQuery] = useState('');
   
   const { 
-    data: searchResults, 
-    isLoading, 
-    error 
-  } = useSearchCoins(searchQuery);
+    data: searchResults,
+    isLoading,
+    isLoadingMarketData,
+    error,
+    hasSearchResults,
+    hasMarketData
+  } = useSearchCoinsWithMarketData(searchQuery);
 
-  // Convert search results to coin format
-  const displayCoins = searchResults 
-    ? searchResults.coins.map(coin => ({
-        ...coin,
-        current_price: 0,
-        market_cap: 0,
-        market_cap_rank: coin.market_cap_rank || 0,
-        fully_diluted_valuation: null,
-        total_volume: 0,
-        high_24h: 0,
-        low_24h: 0,
-        price_change_24h: 0,
-        price_change_percentage_24h: 0,
-        market_cap_change_24h: 0,
-        market_cap_change_percentage_24h: 0,
-        circulating_supply: 0,
-        total_supply: null,
-        max_supply: null,
-        ath: 0,
-        ath_change_percentage: 0,
-        ath_date: '',
-        atl: 0,
-        atl_change_percentage: 0,
-        atl_date: '',
-        roi: null,
-        last_updated: '',
-        image: coin.large,
-      }))
-    : [];
+  // Enhanced search results now include real market data
+  const displayCoins = searchResults?.coins || [];
 
   return (
     <div className="min-h-screen bg-background">
@@ -62,10 +38,20 @@ export default function SearchPage() {
           
           <SearchBar
             onSearch={setSearchQuery}
-            isLoading={isLoading}
+            isLoading={isLoading || isLoadingMarketData}
             placeholder="Search for Bitcoin, Ethereum, etc..."
             className="max-w-lg"
           />
+          
+          {/* Progressive loading indicator */}
+          {!!searchQuery && hasSearchResults && isLoadingMarketData && (
+            <div className="mt-2 text-sm text-muted-foreground">
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 border-2 border-muted border-t-primary rounded-full animate-spin"></div>
+                <span>Loading price data...</span>
+              </div>
+            </div>
+          )}
         </div>
 
         <ErrorBoundary>

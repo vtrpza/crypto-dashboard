@@ -1,8 +1,9 @@
 /**
  * Format a number as currency (USD)
  */
-export function formatCurrency(value: number): string {
-  if (value === 0) return '$0.00';
+export function formatCurrency(value: number | null | undefined): string {
+  if (value == null || value === 0) return '$0.00';
+  if (typeof value !== 'number' || isNaN(value)) return '$0.00';
   
   const isNegative = value < 0;
   const absValue = Math.abs(value);
@@ -28,8 +29,9 @@ export function formatCurrency(value: number): string {
 /**
  * Format a number as a percentage
  */
-export function formatPercentage(value: number): string {
-  if (value === 0) return '0.00%';
+export function formatPercentage(value: number | null | undefined): string {
+  if (value == null || value === 0) return '0.00%';
+  if (typeof value !== 'number' || isNaN(value)) return '0.00%';
   
   return `${value >= 0 ? '+' : ''}${value.toFixed(2)}%`;
 }
@@ -37,8 +39,9 @@ export function formatPercentage(value: number): string {
 /**
  * Format a large number with abbreviations
  */
-export function formatNumber(value: number): string {
-  if (value === 0) return '0';
+export function formatNumber(value: number | null | undefined): string {
+  if (value == null || value === 0) return '0';
+  if (typeof value !== 'number' || isNaN(value)) return '0';
   
   if (Math.abs(value) >= 1e12) {
     return `${(value / 1e12).toFixed(2)}T`;

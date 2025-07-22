@@ -31,7 +31,16 @@ export interface CoinData {
   last_updated: string;
 }
 
-export interface CoinDetails extends CoinData {
+// Raw API response from CoinGecko /coins/{id} endpoint
+export interface CoinDetailsApiResponse {
+  id: string;
+  symbol: string;
+  name: string;
+  image?: {
+    thumb: string;
+    small: string;
+    large: string;
+  };
   description?: {
     en: string;
   };
@@ -54,7 +63,48 @@ export interface CoinDetails extends CoinData {
   market_data?: {
     current_price: { [key: string]: number };
     market_cap: { [key: string]: number };
+    market_cap_rank?: number;
     total_volume: { [key: string]: number };
+    high_24h: { [key: string]: number };
+    low_24h: { [key: string]: number };
+    price_change_24h?: number;
+    price_change_percentage_24h?: number;
+    market_cap_change_24h?: number;
+    market_cap_change_percentage_24h?: number;
+    circulating_supply?: number;
+    total_supply?: number | null;
+    max_supply?: number | null;
+    ath?: { [key: string]: number };
+    ath_change_percentage?: { [key: string]: number };
+    ath_date?: { [key: string]: string };
+    atl?: { [key: string]: number };
+    atl_change_percentage?: { [key: string]: number };
+    atl_date?: { [key: string]: string };
+    last_updated?: string;
+  };
+  last_updated?: string;
+}
+
+// Transformed/normalized interface for components (extends CoinData for consistency)
+export interface CoinDetails extends CoinData {
+  description?: {
+    en: string;
+  };
+  links?: {
+    homepage: string[];
+    blockchain_site: string[];
+    official_forum_url: string[];
+    chat_url: string[];
+    announcement_url: string[];
+    twitter_screen_name: string;
+    facebook_username: string;
+    bitcointalk_thread_identifier: number | null;
+    telegram_channel_identifier: string;
+    subreddit_url: string;
+    repos_url: {
+      github: string[];
+      bitbucket: string[];
+    };
   };
 }
 
@@ -74,6 +124,10 @@ export interface SearchResult {
 
 export interface SearchResponse {
   coins: SearchResult[];
+}
+
+export interface EnhancedSearchResponse {
+  coins: CoinData[];
 }
 
 export interface PriceHistory {

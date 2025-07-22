@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useTopCoins, useSearchCoins } from '@/hooks/useCoins';
+import { useTopCoins, useSearchCoinsWithMarketData } from '@/hooks/useCoins';
 import Header from '@/components/ui/header';
 import SearchBar from '@/components/ui/search-bar';
 import CoinList from '@/components/features/coin-list';
@@ -17,46 +17,19 @@ export default function Home() {
     error: topError 
   } = useTopCoins(20);
   
-  // Search coins when there's a query
+  // Enhanced search with market data
   const { 
-    data: searchResults, 
-    isLoading: isLoadingSearch, 
-    error: searchError 
-  } = useSearchCoins(searchQuery);
+    data: searchResults,
+    isLoading: isLoadingSearch,
+    isLoadingMarketData,
+    error: searchError,
+    hasSearchResults,
+    hasMarketData
+  } = useSearchCoinsWithMarketData(searchQuery);
 
   const isLoading = searchQuery ? isLoadingSearch : isLoadingTop;
   const error = searchQuery ? searchError : topError;
-  const coins = searchQuery ? searchResults?.coins : topCoins;
-
-  // Convert search results to coin format if needed
-  const displayCoins = searchQuery && searchResults 
-    ? searchResults.coins.map(coin => ({
-        ...coin,
-        current_price: 0,
-        market_cap: 0,
-        market_cap_rank: coin.market_cap_rank || 0,
-        fully_diluted_valuation: null,
-        total_volume: 0,
-        high_24h: 0,
-        low_24h: 0,
-        price_change_24h: 0,
-        price_change_percentage_24h: 0,
-        market_cap_change_24h: 0,
-        market_cap_change_percentage_24h: 0,
-        circulating_supply: 0,
-        total_supply: null,
-        max_supply: null,
-        ath: 0,
-        ath_change_percentage: 0,
-        ath_date: '',
-        atl: 0,
-        atl_change_percentage: 0,
-        atl_date: '',
-        roi: null,
-        last_updated: '',
-        image: coin.large,
-      }))
-    : topCoins;
+  const displayCoins = searchQuery ? searchResults?.coins : topCoins;
 
   return (
     <div className="min-h-screen bg-background">
@@ -73,7 +46,7 @@ export default function Home() {
           
           <SearchBar
             onSearch={setSearchQuery}
-            isLoading={isLoading}
+            isLoading={isLoading || (!!searchQuery && isLoadingMarketData)}
             className="max-w-md"
           />
         </div>

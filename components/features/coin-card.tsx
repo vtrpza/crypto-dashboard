@@ -27,13 +27,19 @@ export default function CoinCard({
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center space-x-3">
             <div className="relative w-10 h-10">
-              <Image
-                src={coin.image}
-                alt={`${coin.name} logo`}
-                fill
-                className="rounded-full"
-                sizes="40px"
-              />
+              {coin.image ? (
+                <Image
+                  src={coin.image}
+                  alt={`${coin.name} logo`}
+                  fill
+                  className="rounded-full"
+                  sizes="40px"
+                />
+              ) : (
+                <div className="w-full h-full bg-muted rounded-full flex items-center justify-center text-xs font-medium">
+                  {coin.symbol?.charAt(0) || '?'}
+                </div>
+              )}
             </div>
             <div>
               <h3 className="font-semibold text-card-foreground">
@@ -92,13 +98,19 @@ export default function CoinCard({
         {/* Coin Info */}
         <div className="flex items-center space-x-3 min-w-0 flex-1">
           <div className="relative w-8 h-8 flex-shrink-0">
-            <Image
-              src={coin.image}
-              alt={`${coin.name} logo`}
-              fill
-              className="rounded-full"
-              sizes="32px"
-            />
+            {coin.image ? (
+              <Image
+                src={coin.image}
+                alt={`${coin.name} logo`}
+                fill
+                className="rounded-full"
+                sizes="32px"
+              />
+            ) : (
+              <div className="w-full h-full bg-muted rounded-full flex items-center justify-center text-xs font-medium">
+                {coin.symbol?.charAt(0) || '?'}
+              </div>
+            )}
           </div>
           <div className="min-w-0 flex-1">
             <h3 className="font-semibold text-card-foreground truncate">
