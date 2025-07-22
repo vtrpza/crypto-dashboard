@@ -1,9 +1,6 @@
 {
   "version": 2,
   "name": "crypto-dashboard",
-  "env": {
-    "COINGECKO_API_KEY": "@coingecko-api-key"
-  },
   "headers": [
     {
       "source": "/(.*)",
