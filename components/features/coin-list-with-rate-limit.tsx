@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useTopCoinsWithRateLimit } from '@/hooks/useCoins';
 import RateLimitMessage from '@/components/ui/rate-limit-message';
 import LoadingSkeleton from '@/components/ui/loading-skeleton';
@@ -65,9 +66,11 @@ export default function CoinListWithRateLimit({ limit = 10 }: CoinListWithRateLi
           className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
         >
           <div className="flex items-center gap-3">
-            <img
+            <Image
               src={coin.image}
               alt={coin.name}
+              width={32}
+              height={32}
               className="w-8 h-8 rounded-full"
             />
             <div>
