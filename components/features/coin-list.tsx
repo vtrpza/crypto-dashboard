@@ -48,40 +48,40 @@ export default function CoinList({
 
   return (
     <div className={className}>
-      {/* View Mode Toggle */}
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold text-foreground">
+      {/* View Mode Toggle - Mobile First Responsive */}
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6 sm:mb-8">
+        <h2 className="text-lg sm:text-xl lg:text-2xl font-semibold text-foreground">
           Top Cryptocurrencies
         </h2>
-        <div className="flex border rounded-md bg-muted p-1">
+        <div className="flex border rounded-md bg-muted p-1 self-start sm:self-auto">
           <button
             onClick={() => setViewMode('list')}
-            className={`p-2 rounded transition-colors ${
+            className={`p-2 sm:p-3 rounded transition-colors ${
               viewMode === 'list'
                 ? 'bg-background shadow-sm text-foreground'
                 : 'text-muted-foreground hover:text-foreground'
             }`}
             aria-label="List view"
           >
-            <List className="w-4 h-4" />
+            <List className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
           <button
             onClick={() => setViewMode('grid')}
-            className={`p-2 rounded transition-colors ${
+            className={`p-2 sm:p-3 rounded transition-colors ${
               viewMode === 'grid'
                 ? 'bg-background shadow-sm text-foreground'
                 : 'text-muted-foreground hover:text-foreground'
             }`}
             aria-label="Grid view"
           >
-            <Grid className="w-4 h-4" />
+            <Grid className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
         </div>
       </div>
 
-      {/* Coin List/Grid */}
+      {/* Coin List/Grid - Mobile First Responsive */}
       {viewMode === 'grid' ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
           {coins.map((coin) => (
             <CoinCard
               key={coin.id}
@@ -91,7 +91,7 @@ export default function CoinList({
           ))}
         </div>
       ) : (
-        <div className="space-y-2">
+        <div className="space-y-2 sm:space-y-3">
           {coins.map((coin) => (
             <CoinCard
               key={coin.id}

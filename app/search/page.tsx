@@ -27,12 +27,12 @@ export default function SearchPage() {
     <div className="min-h-screen bg-background">
       <Header />
       
-      <main className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
+      <main id="main-content" className="container mx-auto px-4 py-6 sm:py-8 lg:py-12">
+        <div className="mb-6 sm:mb-8 lg:mb-12">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-3 sm:mb-4">
             Search Cryptocurrencies
           </h1>
-          <p className="text-muted-foreground mb-6">
+          <p className="text-sm sm:text-base text-muted-foreground mb-6 sm:mb-8 max-w-2xl">
             Find specific cryptocurrencies by name or symbol
           </p>
           
@@ -40,7 +40,7 @@ export default function SearchPage() {
             onSearch={setSearchQuery}
             isLoading={isLoading || isLoadingMarketData}
             placeholder="Search for Bitcoin, Ethereum, etc..."
-            className="max-w-lg"
+            className="w-full max-w-md sm:max-w-lg"
           />
           
           {/* Progressive loading indicator */}

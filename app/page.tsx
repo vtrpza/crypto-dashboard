@@ -35,19 +35,19 @@ export default function Home() {
     <div className="min-h-screen bg-background">
       <Header />
       
-      <main className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
+      <main id="main-content" className="container mx-auto px-4 py-6 sm:py-8 lg:py-12">
+        <div className="mb-6 sm:mb-8 lg:mb-12">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-3 sm:mb-4">
             Cryptocurrency Dashboard
           </h1>
-          <p className="text-muted-foreground mb-6">
+          <p className="text-sm sm:text-base text-muted-foreground mb-6 sm:mb-8 max-w-2xl">
             Track the top cryptocurrencies by market cap and search for specific coins
           </p>
           
           <SearchBar
             onSearch={setSearchQuery}
             isLoading={isLoading || (!!searchQuery && isLoadingMarketData)}
-            className="max-w-md"
+            className="w-full max-w-md sm:max-w-lg"
           />
         </div>
 

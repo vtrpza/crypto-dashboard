@@ -33,7 +33,8 @@ export default function CoinCard({
                   alt={`${coin.name} logo`}
                   fill
                   className="rounded-full"
-                  sizes="40px"
+                  sizes="(max-width: 640px) 40px, 48px"
+                  loading="lazy"
                 />
               ) : (
                 <div className="w-full h-full bg-muted rounded-full flex items-center justify-center text-xs font-medium">
@@ -104,7 +105,8 @@ export default function CoinCard({
                 alt={`${coin.name} logo`}
                 fill
                 className="rounded-full"
-                sizes="32px"
+                sizes="(max-width: 640px) 32px, 40px"
+                loading="lazy"
               />
             ) : (
               <div className="w-full h-full bg-muted rounded-full flex items-center justify-center text-xs font-medium">

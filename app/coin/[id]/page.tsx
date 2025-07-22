@@ -62,9 +62,9 @@ function CoinContent({ id }: { id: string }) {
             <p className="text-sm text-muted-foreground mt-1">
               {detailsError?.message || 'Coin not found'}
             </p>
-            <Link href="/" className="inline-flex items-center mt-4 text-primary hover:underline">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Dashboard
+            <Link href="/" className="inline-flex items-center mt-4 py-2 px-1 text-primary hover:text-primary/80 active:text-primary/80 transition-colors">
+              <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" />
+              <span className="text-sm sm:text-base font-medium underline">Back to Dashboard</span>
             </Link>
           </div>
         </main>
@@ -78,15 +78,15 @@ function CoinContent({ id }: { id: string }) {
   return (
     <>
       <Header />
-      <main className="container mx-auto px-4 py-8">
-        {/* Back Button */}
-        <div className="mb-6">
+      <main id="main-content" className="container mx-auto px-4 py-8">
+        {/* Back Button - Mobile First Touch-Friendly */}
+        <div className="mb-6 sm:mb-8">
           <Link 
             href="/" 
-            className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors"
+            className="inline-flex items-center py-2 px-1 text-muted-foreground hover:text-foreground active:text-foreground transition-colors"
           >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Dashboard
+            <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" />
+            <span className="text-sm sm:text-base font-medium">Back to Dashboard</span>
           </Link>
         </div>
 
@@ -102,7 +102,8 @@ function CoinContent({ id }: { id: string }) {
                       alt={`${coinDetails.name} logo`}
                       fill
                       className="rounded-full"
-                      sizes="64px"
+                      sizes="(max-width: 640px) 56px, (max-width: 768px) 64px, 80px"
+                      priority
                     />
                   ) : (
                     <div className="w-full h-full bg-muted rounded-full flex items-center justify-center text-lg font-medium">
