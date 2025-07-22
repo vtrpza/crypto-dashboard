@@ -64,7 +64,7 @@
       "destination": "/api/health"
     }
   ],
-  "regions": ["iad1", "sfo1", "lhr1"],
+  "regions": ["iad1"],
   "functions": {
     "app/api/**/*.js": {
       "maxDuration": 10
