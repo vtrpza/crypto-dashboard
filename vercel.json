@@ -1,12 +1,6 @@
 {
   "version": 2,
   "name": "crypto-dashboard",
-  "builds": [
-    {
-      "src": "next.config.js",
-      "use": "@vercel/next"
-    }
-  ],
   "env": {
     "NEXT_PUBLIC_COINGECKO_API_KEY": "@coingecko-api-key"
   },
