@@ -2,7 +2,7 @@
   "version": 2,
   "name": "crypto-dashboard",
   "env": {
-    "NEXT_PUBLIC_COINGECKO_API_KEY": "@coingecko-api-key"
+    "COINGECKO_API_KEY": "@coingecko-api-key"
   },
   "headers": [
     {
