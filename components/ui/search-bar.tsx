@@ -21,9 +21,12 @@ export default function SearchBar({
 
   // Debounced search function
   const debouncedSearch = useCallback(
-    debounce((searchQuery: string) => {
-      onSearch(searchQuery);
-    }, 300),
+    (searchQuery: string) => {
+      const debouncedFn = debounce(() => {
+        onSearch(searchQuery);
+      }, 300);
+      debouncedFn();
+    },
     [onSearch]
   );
 

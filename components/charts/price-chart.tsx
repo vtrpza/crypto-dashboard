@@ -29,7 +29,7 @@ function CustomTooltip({ active, payload, label }: TooltipProps) {
     return (
       <div className="bg-background border rounded-lg p-3 shadow-lg">
         <p className="text-muted-foreground text-sm">
-          {formatChartDate(label)}
+          {label ? formatChartDate(label) : 'N/A'}
         </p>
         <p className="font-semibold text-foreground">
           {formatCurrency(payload[0].value)}

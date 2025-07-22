@@ -85,7 +85,7 @@ export default function SearchPage() {
             <div>
               {searchQuery && searchResults && (
                 <p className="text-muted-foreground mb-4">
-                  Found {searchResults.coins.length} results for "{searchQuery}"
+                  Found {searchResults.coins.length} results for &quot;{searchQuery}&quot;
                 </p>
               )}
               <CoinList
