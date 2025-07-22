@@ -56,17 +56,7 @@ export default function RateLimitMessage({
 
   const t = texts[language];
 
-  useEffect(() => {
-    if (countdown > 0) {
-      const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
-      return () => clearTimeout(timer);
-    } else if (countdown === 0 && onRetry) {
-      // Auto-retry when countdown reaches 0
-      handleRetry();
-    }
-  }, [countdown, onRetry, handleRetry]);
-
-  const handleRetry = async () => {
+  const handleRetry = useCallback(async () => {
     if (isRetrying || !onRetry) return;
     
     setIsRetrying(true);
@@ -79,7 +69,17 @@ export default function RateLimitMessage({
     } finally {
       setIsRetrying(false);
     }
-  };
+  }, [isRetrying, onRetry, countdownSeconds]);
+
+  useEffect(() => {
+    if (countdown > 0) {
+      const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+      return () => clearTimeout(timer);
+    } else if (countdown === 0 && onRetry) {
+      // Auto-retry when countdown reaches 0
+      handleRetry();
+    }
+  }, [countdown, onRetry, handleRetry]);
 
   const formatTime = (seconds: number): string => {
     if (seconds < 60) {
