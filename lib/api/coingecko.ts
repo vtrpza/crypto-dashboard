@@ -38,10 +38,36 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
+    const status = error.response?.status;
+    const isRateLimit = status === 429;
+    
+    // Extract retry-after header (can be in seconds or as a date)
+    let retryAfter: number | undefined;
+    if (isRateLimit) {
+      const retryAfterHeader = error.response?.headers['retry-after'];
+      if (retryAfterHeader) {
+        // If it's a number, it's seconds. If it's a date string, calculate difference
+        const retryValue = parseInt(retryAfterHeader);
+        retryAfter = isNaN(retryValue) ? 60 : retryValue; // Default to 60 seconds if parsing fails
+      } else {
+        retryAfter = 60; // Default retry after 60 seconds for rate limits
+      }
+    }
+
     const apiError: ApiError = {
-      message: error.response?.data?.message || error.message || 'An unknown error occurred',
-      status: error.response?.status,
+      message: isRateLimit 
+        ? 'Too many requests. Please wait before trying again.'
+        : error.response?.data?.message || error.message || 'An unknown error occurred',
+      status,
+      isRateLimit,
+      retryAfter,
     };
+    
+    // Log rate limit errors for monitoring
+    if (isRateLimit) {
+      console.warn(`Rate limit hit. Retry after: ${retryAfter} seconds`);
+    }
+    
     return Promise.reject(apiError);
   }
 );

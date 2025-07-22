@@ -139,6 +139,8 @@ export interface PriceHistory {
 export interface ApiError {
   message: string;
   status?: number;
+  isRateLimit?: boolean;
+  retryAfter?: number; // seconds to wait before retrying
 }
 
 export interface LoadingState {

@@ -1,8 +1,10 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
+import { useEffect } from 'react';
 import { CoinGeckoAPI } from '@/lib/api/coingecko';
-import type { CoinData, CoinDetails, SearchResponse, EnhancedSearchResponse, ChartData } from '@/lib/types/crypto';
+import type { CoinData, CoinDetails, SearchResponse, EnhancedSearchResponse, ChartData, ApiError } from '@/lib/types/crypto';
+import { useRateLimit } from './useRateLimit';
 
 /**
  * Hook to fetch top coins by market cap
@@ -181,4 +183,52 @@ export function useTrendingCoins() {
     queryFn: () => CoinGeckoAPI.getTrendingCoins(),
     staleTime: 10 * 60 * 1000, // 10 minutes
   });
+}
+
+/**
+ * Enhanced hook to fetch top coins with integrated rate limit handling
+ * This version includes rate limit state management and retry logic
+ */
+export function useTopCoinsWithRateLimit(limit = 20) {
+  const rateLimit = useRateLimit();
+
+  const query = useQuery<CoinData[], ApiError>({
+    queryKey: ['coins', 'top', limit],
+    queryFn: () => CoinGeckoAPI.getTopCoins(limit),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
+    retry: (failureCount, error) => {
+      // Don't retry rate limit errors - let the rate limit hook handle it
+      const apiError = error as ApiError;
+      if (apiError.isRateLimit) {
+        return false;
+      }
+      return failureCount < 3;
+    },
+  });
+
+  // Handle rate limit errors
+  useEffect(() => {
+    if (query.error) {
+      const apiError = query.error as ApiError;
+      if (apiError.isRateLimit) {
+        rateLimit.setRateLimit(apiError);
+      } else {
+        rateLimit.clearRateLimit();
+      }
+    }
+  }, [query.error, rateLimit]);
+
+  const handleRetry = () => {
+    rateLimit.retry();
+    query.refetch();
+  };
+
+  return {
+    ...query,
+    rateLimit: {
+      ...rateLimit,
+      retry: handleRetry,
+    },
+  };
 }
